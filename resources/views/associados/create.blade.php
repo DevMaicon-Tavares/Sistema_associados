@@ -1,53 +1,42 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastrar Associado - Sistema de Associados</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">Sistema de Associados</a>
-            <div class="navbar-nav ms-auto">
-                <a href="{{ route('dashboard') }}" class="nav-link">Dashboard</a>
-                <a href="{{ route('associados.index') }}" class="nav-link">Associados</a>
-                <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                    @csrf
-                    <button type="submit" class="btn btn-outline-light">Logout</button>
-                </form>
-            </div>
+@extends('layouts.app')
+
+@section('title', 'Novo Associado - Sistema de Associados')
+
+@section('content')
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="page-title">Cadastrar Associado</h1>
+            <p class="text-muted mb-0">Preencha os dados do associado e defina o status financeiro.</p>
         </div>
-    </nav>
-    <div class="container mt-4">
-        <h1>Cadastrar Associado</h1>
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+        <a href="{{ route('associados.index') }}" class="btn btn-outline-secondary">Voltar</a>
+    </div>
+
+    <div class="card p-4">
         <form method="POST" action="{{ route('associados.store') }}">
             @csrf
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome</label>
-                <input type="text" class="form-control" id="nome" name="nome" required>
+                <input type="text" class="form-control" id="nome" name="nome" value="{{ old('nome') }}" required>
             </div>
             <div class="mb-3">
                 <label for="cpf" class="form-label">CPF</label>
-                <input type="text" class="form-control" id="cpf" name="cpf" required>
+                <input type="text" class="form-control" id="cpf" name="cpf" value="{{ old('cpf') }}" required>
             </div>
             <div class="mb-3">
                 <label for="telefone" class="form-label">Telefone</label>
-                <input type="text" class="form-control" id="telefone" name="telefone">
+                <input type="text" class="form-control" id="telefone" name="telefone" value="{{ old('telefone') }}">
             </div>
-            <button type="submit" class="btn btn-primary">Cadastrar</button>
-            <a href="{{ route('associados.index') }}" class="btn btn-secondary">Voltar</a>
+            <div class="mb-3">
+                <label for="status_pagamento" class="form-label">Status de pagamento</label>
+                <select id="status_pagamento" name="status_pagamento" class="form-select" required>
+                    <option value="em dia" @selected(old('status_pagamento') === 'em dia')>Em dia</option>
+                    <option value="atrasado" @selected(old('status_pagamento') === 'atrasado')>Atrasado</option>
+                </select>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+                <a href="{{ route('associados.index') }}" class="btn btn-secondary">Cancelar</a>
+            </div>
         </form>
     </div>
-</body>
-</html>
+@endsection

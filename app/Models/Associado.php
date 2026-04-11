@@ -13,5 +13,6 @@ class Associado extends Model
         'nome',
         'cpf',
         'telefone',
+        'status_pagamento',
     ];
 }
