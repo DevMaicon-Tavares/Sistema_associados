@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AssociadoController;
 use App\Http\Controllers\ReuniaoController;
+use App\Http\Controllers\WhatsAppController;
 use App\Models\Associado;
 use App\Models\Reuniao;
 
@@ -24,7 +25,11 @@ Route::middleware('auth')->group(function () {
         return view('dashboard', compact('associadosEmDia', 'associadosAtrasados', 'proximasReunioes'));
     })->name('dashboard');
 
-    Route::resource('associados', AssociadoController::class)->only(['index', 'create', 'store', 'show']);
+    Route::resource('associados', AssociadoController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']);
     Route::patch('associados/{associado}/status', [AssociadoController::class, 'updateStatus'])->name('associados.updateStatus');
-    Route::resource('reunioes', ReuniaoController::class)->only(['index', 'create', 'store']);
+    Route::resource('reunioes', ReuniaoController::class)->parameters([
+        'reunioes' => 'reuniao'
+    ])->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+
+    Route::get('/api/whatsapp/status', [WhatsAppController::class, 'status'])->name('api.whatsapp.status');
 });

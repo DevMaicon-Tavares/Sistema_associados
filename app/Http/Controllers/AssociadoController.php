@@ -61,4 +61,31 @@ class AssociadoController extends Controller
 
         return redirect()->back()->with('success', 'Status financeiro atualizado com sucesso!');
     }
+
+    public function edit(Associado $associado)
+    {
+        return view('associados.edit', compact('associado'));
+    }
+
+    public function update(Request $request, Associado $associado)
+    {
+        $request->validate([
+            'nome' => 'required|string|max:255',
+            'cpf' => 'required|string|max:14|unique:associados,cpf,' . $associado->id,
+            'telefone' => 'nullable|string|max:20',
+            'status_pagamento' => 'required|in:em dia,atrasado',
+        ]);
+
+        $associado->update($request->all());
+
+        return redirect()->route('associados.index')->with('success', 'Associado atualizado com sucesso!');
+    }
+
+    public function destroy(Associado $associado)
+    {
+        $nome = $associado->nome;
+        $associado->delete();
+
+        return redirect()->route('associados.index')->with('success', "Associado \"$nome\" deletado com sucesso!");
+    }
 }
