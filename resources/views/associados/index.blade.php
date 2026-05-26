@@ -31,46 +31,57 @@
     </div>
 </div>
 
-<div class="table-responsive">
-    <table class="table table-hover align-middle">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>CPF</th>
-                <th>Telefone</th>
-                <th>Status</th>
-                <th class="text-end">Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($associados as $associado)
-            <tr>
-                <td>{{ $associado->nome }}</td>
-                <td>{{ $associado->cpf }}</td>
-                <td>{{ $associado->telefone ?? '—' }}</td>
-                <td>
+<div class="section-header mb-4">
+    <h2 class="section-title">👥 Lista de Associados</h2>
+</div>
+
+<div class="associado-cards-container">
+    @forelse($associados as $associado)
+    <div class="associado-card @if($associado->status_pagamento === 'atrasado') associado-card--overdue @endif">
+        <div class="associado-card__header">
+            <div>
+                <h3 class="associado-card__name">{{ $associado->nome }}</h3>
+                <p class="associado-card__cpf">CPF: {{ $associado->cpf }}</p>
+            </div>
+            @if($associado->status_pagamento === 'em dia')
+            <span class="associado-card__badge bg-success">✓ Em dia</span>
+            @else
+            <span class="associado-card__badge bg-danger">⚠ Atrasado</span>
+            @endif
+        </div>
+
+        <div class="associado-card__body">
+            <div class="associado-info">
+                <span class="info-label">📞 Telefone:</span>
+                <span class="info-value">{{ $associado->telefone ?? '—' }}</span>
+            </div>
+            <div class="associado-info">
+                <span class="info-label">💰 Status:</span>
+                <span class="info-value">
                     @if($associado->status_pagamento === 'em dia')
-                    <span class="badge bg-success">Em dia</span>
+                    <span class="badge bg-success" style="font-size: 0.8rem;">Em dia</span>
                     @else
-                    <span class="badge bg-danger">Atrasado</span>
+                    <span class="badge bg-danger" style="font-size: 0.8rem;">Atrasado</span>
                     @endif
-                </td>
-                <td class="text-end">
-                    <a href="{{ route('associados.show', $associado) }}" class="btn btn-sm btn-outline-primary">Área</a>
-                    <a href="{{ route('associados.edit', $associado) }}" class="btn btn-sm btn-outline-secondary">Editar</a>
-                    <form method="POST" action="{{ route('associados.destroy', $associado) }}" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja deletar este associado?')">Deletar</button>
-                    </form>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="5" class="text-center">Nenhum associado encontrado.</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
+                </span>
+            </div>
+        </div>
+
+        <div class="associado-card__footer">
+            <a href="{{ route('associados.show', $associado) }}" class="btn btn-sm btn-info">Ver Área</a>
+            <a href="{{ route('associados.edit', $associado) }}" class="btn btn-sm btn-warning">Editar</a>
+            <form method="POST" action="{{ route('associados.destroy', $associado) }}" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja deletar este associado?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-sm btn-danger">Deletar</button>
+            </form>
+        </div>
+    </div>
+    @empty
+    <div class="text-center py-5 col-12">
+        <p class="text-muted">Nenhum associado encontrado.</p>
+        <p class="text-muted small">Clique em "Novo associado" para cadastrar um.</p>
+    </div>
+    @endforelse
 </div>
 @endsection

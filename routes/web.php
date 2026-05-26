@@ -29,7 +29,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('associados/{associado}/status', [AssociadoController::class, 'updateStatus'])->name('associados.updateStatus');
     Route::resource('reunioes', ReuniaoController::class)->parameters([
         'reunioes' => 'reuniao'
-    ])->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+    ])->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']);
+
+    Route::get('reunioes/{reuniao}/ata', [ReuniaoController::class, 'downloadAta'])->name('reunioes.ata.download');
+    Route::get('reunioes/{reuniao}/ata/view', [ReuniaoController::class, 'viewAta'])->name('reunioes.ata.view');
 
     Route::get('/api/whatsapp/status', [WhatsAppController::class, 'status'])->name('api.whatsapp.status');
 });

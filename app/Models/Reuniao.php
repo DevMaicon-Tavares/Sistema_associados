@@ -16,6 +16,7 @@ class Reuniao extends Model
         'descricao',
         'data',
         'horario',
+        'ata_path',
     ];
 
     protected $casts = [

@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use App\Models\Reuniao;
 use App\Models\User;
@@ -53,6 +55,30 @@ class ReuniaoCrudTest extends TestCase
         $reuniao->refresh();
         $this->assertEquals('Reunião Atualizada', $reuniao->titulo);
         $this->assertEquals('Descrição atualizada', $reuniao->descricao);
+    }
+
+    public function test_reuniao_store_with_ata_pdf()
+    {
+        Storage::fake('public');
+
+        $response = $this->actingAs($this->user)->post(route('reunioes.store'), [
+            'titulo' => 'Reunião com Ata',
+            'descricao' => 'Descrição da reunião',
+            'data' => '2026-06-10',
+            'horario' => '14:00',
+            'ata' => UploadedFile::fake()->create('ata-reuniao.pdf', 100, 'application/pdf'),
+        ]);
+
+        $response->assertRedirect(route('reunioes.index'));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('reunioes', [
+            'titulo' => 'Reunião com Ata',
+        ]);
+
+        $reuniao = Reuniao::where('titulo', 'Reunião com Ata')->first();
+        $this->assertNotNull($reuniao->ata_path);
+        $this->assertTrue(Storage::disk('public')->exists($reuniao->ata_path));
     }
 
     public function test_reuniao_destroy()

@@ -6,37 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Sistema de Associados')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .navbar-brand {
-            font-weight: 700;
-        }
-
-        .page-title {
-            margin-bottom: 1.5rem;
-        }
-
-        .card {
-            border: none;
-            box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, .08);
-        }
-
-        .table thead th {
-            background-color: #f1f3f5;
-        }
-
-        .form-control,
-        .form-select {
-            min-height: 48px;
-        }
-
-        .badge {
-            font-size: 0.95rem;
-        }
-    </style>
+    <link href="{{ asset('css/site.css') }}" rel="stylesheet">
 </head>
 
 <body>
@@ -75,6 +45,7 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @yield('scripts')
 </body>
 
 </html>
