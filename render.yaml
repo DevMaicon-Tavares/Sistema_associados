@@ -17,17 +17,9 @@ services:
       - key: APP_URL
         value: "https://<YOUR-RENDER-SERVICE>.onrender.com"
       - key: DB_CONNECTION
-        value: mysql
-      - key: DB_HOST
-        value: "<YOUR-DB-HOST>"
-      - key: DB_PORT
-        value: "3306"
+        value: sqlite
       - key: DB_DATABASE
-        value: associado
-      - key: DB_USERNAME
-        value: root
-      - key: DB_PASSWORD
-        value: "<YOUR-DB-PASSWORD>"
+        value: /var/data/database.sqlite
       - key: CACHE_STORE
         value: database
       - key: SESSION_DRIVER
@@ -36,6 +28,3 @@ services:
         value: database
       - key: FILESYSTEM_DISK
         value: local
-
-# Observação: Render atualmente não oferece MySQL gerenciado no serviço de banco de dados.
-# Use um banco MySQL externo ou ajuste o projeto para PostgreSQL/SQLite conforme necessário.
