@@ -15,7 +15,7 @@ services:
       - key: APP_KEY
         generateValue: true
       - key: APP_URL
-        value: "https://<YOUR-RENDER-SERVICE>.onrender.com"
+        value: "https://sistema-associados-bci0.onrender.com"
       - key: DB_CONNECTION
         value: sqlite
       - key: DB_DATABASE

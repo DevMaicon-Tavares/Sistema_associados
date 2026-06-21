@@ -10,9 +10,10 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     libpng-dev \
     libxml2-dev \
+    libsqlite3-dev \
     nodejs \
     npm \
-    && docker-php-ext-install pdo_mysql mbstring bcmath intl xml zip \
+    && docker-php-ext-install pdo_sqlite mbstring bcmath intl xml zip \
     && a2enmod rewrite headers \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
