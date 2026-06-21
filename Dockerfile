@@ -34,6 +34,7 @@ RUN npm install && npm run build
 
 # Copy application files
 COPY . .
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 # Now that the application files (including artisan) are present, run Composer scripts
 RUN composer dump-autoload --optimize \
@@ -41,6 +42,7 @@ RUN composer dump-autoload --optimize \
 
 # Set permissions for Laravel storage and cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Configure Apache to use the public directory
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
@@ -48,4 +50,4 @@ RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-avail
     && sed -ri -e 's!/var/www/htdocs!/var/www/html/public!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 EXPOSE 80
-CMD ["apache2-foreground"]
+CMD ["/usr/local/bin/docker-entrypoint.sh"]
