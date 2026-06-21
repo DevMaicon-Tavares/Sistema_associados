@@ -28,7 +28,7 @@ RUN composer install --no-dev --optimize-autoloader --prefer-dist --no-interacti
 
 # Install JS dependencies and build assets
 COPY package.json package-lock.json vite.config.js ./
-COPY resources/css/app.css resources/js/app.js ./resources/css/app.css ./resources/js/app.js
+COPY resources/css/app.css resources/js/app.js ./
 RUN npm install && npm run build
 
 # Copy application files
