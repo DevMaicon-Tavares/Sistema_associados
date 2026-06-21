@@ -23,14 +23,21 @@ WORKDIR /var/www/html
 
 # Install PHP dependencies first to leverage build cache
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction
+# Install PHP dependencies without running Composer scripts (artisan not present yet)
+RUN composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction --no-scripts
 
 # Install JS dependencies and build assets
 COPY package.json package-lock.json ./
 RUN npm install && npm run build
 
 # Copy application files
+
+# Copy application files
 COPY . .
+
+# Now that the application files (including artisan) are present, run Composer scripts
+RUN composer dump-autoload --optimize \
+    && php artisan package:discover --ansi || true
 
 # Set permissions for Laravel storage and cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
