@@ -12,6 +12,20 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
+Route::get('/__debug', function () {
+    return response()->json([
+        'app_env' => config('app.env'),
+        'app_debug' => config('app.debug'),
+        'app_url' => config('app.url'),
+        'app_key_set' => ! empty(env('APP_KEY')),
+        'db_connection' => config('database.default'),
+        'db_database' => config('database.connections.sqlite.database'),
+        'session_driver' => config('session.driver'),
+        'log_channel' => config('logging.default'),
+        'storage_writable' => is_writable(storage_path()),
+    ]);
+});
+
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
