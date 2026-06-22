@@ -1,12 +1,23 @@
 #!/bin/sh
 set -e
 
-# Ensure the SQLite runtime directory and database file exist.
-mkdir -p /var/data
-if [ ! -f /var/data/database.sqlite ]; then
-  touch /var/data/database.sqlite
+# Use the configured DB path or default to the persistent /var/data location.
+DB_PATH=${DB_DATABASE:-/var/data/database.sqlite}
+
+mkdir -p "$(dirname "$DB_PATH")"
+touch "$DB_PATH"
+chown -R www-data:www-data "$(dirname "$DB_PATH")"
+
+# Ensure the Laravel local path points to the persistent database file.
+if [ "${DB_PATH}" != "/var/www/html/database/database.sqlite" ]; then
+  mkdir -p /var/www/html/database
+  ln -sf "$DB_PATH" /var/www/html/database/database.sqlite
 fi
-chown -R www-data:www-data /var/data
+
+# Fall back to a persistent database path if no runtime env var is present.
+if [ -z "$DB_DATABASE" ]; then
+  export DB_DATABASE=/var/data/database.sqlite
+fi
 
 # Run database migrations on startup to create required SQLite tables.
 php artisan migrate --force
