@@ -14,44 +14,39 @@ if [ "${DB_PATH}" != "/var/www/html/database/database.sqlite" ]; then
   ln -sf "$DB_PATH" /var/www/html/database/database.sqlite
 fi
 
-# Diagnostic: show what env vars are available at entrypoint time (Render logs)
 echo "[entrypoint] APP_ENV=${APP_ENV:-NOT_SET}" >&2
-echo "[entrypoint] APP_DEBUG=${APP_DEBUG:-NOT_SET}" >&2
-echo "[entrypoint] DB_CONNECTION=${DB_CONNECTION:-NOT_SET}" >&2
-echo "[entrypoint] DB_PATH=$DB_PATH" >&2
 echo "[entrypoint] APP_KEY_SET=$([ -n "$APP_KEY" ] && echo YES || echo NO)" >&2
+echo "[entrypoint] APP_URL=${APP_URL:-NOT_SET}" >&2
 
-# Write .env so Apache/PHP can read all configuration via phpdotenv.
+# Write .env - NOTE: APP_KEY must NOT be quoted or key:generate will break it
 cat > /var/www/html/.env <<EOF
-APP_NAME="${APP_NAME:-Sistema Associados}"
-APP_ENV="${APP_ENV:-production}"
-APP_DEBUG="${APP_DEBUG:-false}"
-APP_KEY="${APP_KEY}"
-APP_URL="${APP_URL:-http://localhost}"
-DB_CONNECTION="${DB_CONNECTION:-sqlite}"
-DB_DATABASE="${DB_PATH}"
-SESSION_DRIVER="${SESSION_DRIVER:-database}"
-CACHE_STORE="${CACHE_STORE:-database}"
-QUEUE_CONNECTION="${QUEUE_CONNECTION:-database}"
-FILESYSTEM_DISK="${FILESYSTEM_DISK:-local}"
-LOG_CHANNEL="${LOG_CHANNEL:-stderr}"
+APP_NAME=Sistema Associados
+APP_ENV=${APP_ENV:-production}
+APP_DEBUG=${APP_DEBUG:-false}
+APP_KEY=${APP_KEY}
+APP_URL=${APP_URL:-https://sistema-associados-bci0.onrender.com}
+DB_CONNECTION=${DB_CONNECTION:-sqlite}
+DB_DATABASE=${DB_PATH}
+SESSION_DRIVER=${SESSION_DRIVER:-database}
+CACHE_STORE=${CACHE_STORE:-database}
+QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
+FILESYSTEM_DISK=${FILESYSTEM_DISK:-local}
+LOG_CHANNEL=${LOG_CHANNEL:-stderr}
 EOF
 
 chown www-data:www-data /var/www/html/.env
 chmod 640 /var/www/html/.env
 
-# If APP_KEY is empty, generate one (writes directly into .env)
+echo "[entrypoint] .env written, APP_KEY line: $(grep '^APP_KEY=' /var/www/html/.env)" >&2
+
+# Generate APP_KEY if missing (artisan will write it unquoted into .env)
 if [ -z "$APP_KEY" ]; then
-  echo "[entrypoint] APP_KEY missing - generating now" >&2
+  echo "[entrypoint] APP_KEY missing - generating" >&2
   php artisan key:generate --force
 fi
 
-# Clear stale config/cache to avoid bootstrap failures
 php artisan config:clear || true
 php artisan cache:clear  || true
-
-# Run database migrations on startup to create required SQLite tables.
 php artisan migrate --force
 
-# Start Apache.
 exec apache2-foreground
