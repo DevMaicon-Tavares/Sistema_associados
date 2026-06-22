@@ -49,5 +49,10 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf \
     && sed -ri -e 's!/var/www/htdocs!/var/www/html/public!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
+# Configure PHP error logging
+RUN echo "log_errors = On" >> /usr/local/etc/php/conf.d/logging.ini && \
+    echo "error_log = /dev/stderr" >> /usr/local/etc/php/conf.d/logging.ini && \
+    echo "display_errors = Off" >> /usr/local/etc/php/conf.d/logging.ini
+
 EXPOSE 80
 CMD ["/usr/local/bin/docker-entrypoint.sh"]

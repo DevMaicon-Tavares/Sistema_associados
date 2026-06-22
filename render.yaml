@@ -28,3 +28,5 @@ services:
         value: database
       - key: FILESYSTEM_DISK
         value: local
+      - key: LOG_CHANNEL
+        value: stderr
