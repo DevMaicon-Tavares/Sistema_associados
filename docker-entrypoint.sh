@@ -14,10 +14,25 @@ if [ "${DB_PATH}" != "/var/www/html/database/database.sqlite" ]; then
   ln -sf "$DB_PATH" /var/www/html/database/database.sqlite
 fi
 
-# Fall back to a persistent database path if no runtime env var is present.
-if [ -z "$DB_DATABASE" ]; then
-  export DB_DATABASE=/var/data/database.sqlite
-fi
+# Apache does not pass shell environment variables to PHP.
+# Write a .env file so Laravel can read all runtime configuration via vlucas/phpdotenv.
+cat > /var/www/html/.env <<ENV
+APP_NAME="${APP_NAME:-Sistema Associados}"
+APP_ENV="${APP_ENV:-production}"
+APP_DEBUG="${APP_DEBUG:-false}"
+APP_KEY="${APP_KEY}"
+APP_URL="${APP_URL:-http://localhost}"
+DB_CONNECTION="${DB_CONNECTION:-sqlite}"
+DB_DATABASE="${DB_PATH}"
+SESSION_DRIVER="${SESSION_DRIVER:-database}"
+CACHE_STORE="${CACHE_STORE:-database}"
+QUEUE_CONNECTION="${QUEUE_CONNECTION:-database}"
+FILESYSTEM_DISK="${FILESYSTEM_DISK:-local}"
+LOG_CHANNEL="${LOG_CHANNEL:-stderr}"
+ENV
+
+chown www-data:www-data /var/www/html/.env
+chmod 640 /var/www/html/.env
 
 # Run database migrations on startup to create required SQLite tables.
 php artisan migrate --force
