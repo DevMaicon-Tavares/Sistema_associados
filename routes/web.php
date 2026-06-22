@@ -5,6 +5,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AssociadoController;
 use App\Http\Controllers\ReuniaoController;
 use App\Http\Controllers\WhatsAppController;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Models\Associado;
 use App\Models\Reuniao;
 
@@ -24,7 +28,12 @@ Route::get('/__debug', function () {
         'log_channel' => config('logging.default'),
         'storage_writable' => is_writable(storage_path()),
     ]);
-});
+})->withoutMiddleware([
+    EncryptCookies::class,
+    AddQueuedCookiesToResponse::class,
+    StartSession::class,
+    ShareErrorsFromSession::class,
+]);
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
